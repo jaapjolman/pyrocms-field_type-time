@@ -1,7 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
+ * PyroStreams Date/Time Field Type
  *
+ * @package		PyroCMS\Core\Modules\Streams Core\Field Types
+ * @author		Parse19
+ * @copyright	Copyright (c) 2011 - 2012, Parse19
+ * @license		http://parse19.com/pyrostreams/docs/license
+ * @link		http://parse19.com/pyrostreams
  */
 
 class Field_time
