@@ -2,14 +2,13 @@ pyrocms-field_type-time
 =======================
 
 $field = array(
-       /**
-	* field_type
-	*/
+
+       /** field_type */
        'type'    => 'time',
 
        'extra'    => array(
        		  /**
-		   * Option : duration : 'yes'/'no'
+		   * Option : use_duration : 'yes'/'no'
 		   *
 		   * Allow you to register time HH:mm as dropdown
 		   * or duration HH:mm as input box.
