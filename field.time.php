@@ -1,13 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * PyroStreams Date/Time Field Type
  *
- * @package		PyroCMS\Core\Modules\Streams Core\Field Types
- * @author		Parse19
- * @copyright	Copyright (c) 2011 - 2012, Parse19
- * @license		http://parse19.com/pyrostreams/docs/license
- * @link		http://parse19.com/pyrostreams
  */
 
 class Field_time
@@ -23,14 +17,17 @@ class Field_time
      *
      */
     public function form_output($data, $entry_id, $field)
-    {    	
+    {    
+    	$time_input	= null;
+    	
     	if ($data['custom']['use_duration'] == 'yes')
     	{
+    		$times = explode(':', $data['value']);
     		// Hour
-			$time_input = form_input($data['form_slug'].'_hour', $time['hour'], 'style="min-width: 100px; width:100px;"').'&nbsp&nbsph&nbsp&nbsp';
+			$time_input = form_input($data['form_slug'].'_hour', $times[0], 'style="min-width: 100px; width:100px;"').'&nbsp&nbsph&nbsp&nbsp';
 			
 			// Minute
-			$time_input .= form_input($data['form_slug'].'_minute', $time['minute'], 'style="min-width: 100px; width:100px;"');
+			$time_input .= form_input($data['form_slug'].'_minute', $times[1], 'style="min-width: 100px; width:100px;"');
     	}
     	else
     	{
@@ -82,9 +79,9 @@ class Field_time
 			{
 				$am_pm_current = 'am';
 		
-				if (isset($date['pre_hour']))
+				if (isset($time['pre_hour']))
 				{
-					if ($date['pre_hour'] >= 12)
+					if ($time['pre_hour'] >= 12)
 					{
 						$am_pm_current = 'pm';
 					}
@@ -92,6 +89,9 @@ class Field_time
 			}
 			$time_input .= form_dropdown($data['form_slug'].'_am_pm', $am_pm, $am_pm_current, 'style="min-width: 100px; width:100px;"');
 		}
+
+		$time_input .= form_hidden($data['form_slug'], '1');
+		
 		return $time_input;
     }
     
@@ -100,6 +100,12 @@ class Field_time
      */
     public function pre_save($input, $field)
 	{
+		// input data without form field
+		if (isset($input) && !empty($input) && $input !== '1')
+		{
+			return $input;
+		}
+		
 		// Hour
 		$hour = '00';
 		if ($this->CI->input->post($field->field_slug.'_hour'))
@@ -108,7 +114,7 @@ class Field_time
 	
 			if ($this->CI->input->post($field->field_slug.'_am_pm') == 'pm' and $hour < 12)
 			{
-				$hour = $hour+12;
+				$hour = $hour + 12;
 			}
 		}
 			
@@ -125,16 +131,8 @@ class Field_time
 	/**
 	 *
 	 */
-	/*public function pre_output($input, $params)
-	{
-		return ;
-	}*/
-	
-	/**
-	 *
-	 */
 	private function get_time($time, $slug)
-	{
+	{		
 		$out['hour']	= '';
 		$out['minute']	= '';
 
@@ -145,11 +143,15 @@ class Field_time
 		
 		$times = explode(':', $time);
 		
-		$out['hour']		= $this->two_digit_number($time[0]);
-		$out['minute']		= $this->two_digit_number($time[1]);
+		$out['hour']		= $this->two_digit_number($times[0]);
+		$out['minute']		= $this->two_digit_number($times[1]);
 			
 		// Format hour for our drop down since we are using am/pm
-		if( $out['hour'] > 12 ) $out['hour'] = $out['hour']-12;
+		if( $out['hour'] > 12 )
+		{
+			$out['pre_hour'] = $out['hour'];
+			$out['hour'] = $out['hour'] - 12;
+		}
 
 		return $out;
 	}
