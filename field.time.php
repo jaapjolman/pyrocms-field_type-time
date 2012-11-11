@@ -22,7 +22,11 @@ class Field_time
     	
     	if ($data['custom']['use_duration'] == 'yes')
     	{
-    		$times = explode(':', $data['value']);
+    		$times = array('00', '00');
+    		if (isset($data['value']) && !empty($data['value']))
+    		{
+    			$times = explode(':', $data['value']);
+    		}
     		// Hour
 			$time_input = form_input($data['form_slug'].'_hour', $times[0], 'style="min-width: 100px; width:100px;"').'&nbsp&nbsph&nbsp&nbsp';
 			
